@@ -12,11 +12,11 @@ interface ScheduledTour {
     coverImage: string;
     date: Date;
     location: string;
-    schoolName: string;
-    schoolCity: string;
-    schoolDistrict: string;
-    schoolId: string;
-    registeredCount: number;
+    schoolName?: string;
+    schoolCity?: string;
+    schoolDistrict?: string;
+    schoolId?: string;
+    registeredCount?: number;
 }
 
 interface TourListProps {
@@ -36,7 +36,7 @@ export function TourList({ tours }: TourListProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
             {tours.map((tour, idx) => (
                 <motion.div
-                    key={`${tour.id}-${tour.schoolId}`}
+                    key={`${tour.id}-${tour.schoolId || idx}`}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
@@ -61,26 +61,30 @@ export function TourList({ tours }: TourListProps) {
                         <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 line-clamp-1">{tour.title}</h3>
 
                         <div className="space-y-3 mb-6">
-                            <div className="flex items-start gap-2 text-slate-500 text-sm">
-                                <School size={16} className="text-amber-500 mt-0.5 shrink-0" />
-                                <div>
-                                    <span className="font-medium text-slate-900 dark:text-slate-200 block">{tour.schoolName}</span>
-                                    <span className="text-slate-400 text-xs">{tour.schoolCity} / {tour.schoolDistrict}</span>
+                            {tour.schoolName && (
+                                <div className="flex items-start gap-2 text-slate-500 text-sm">
+                                    <School size={16} className="text-amber-500 mt-0.5 shrink-0" />
+                                    <div>
+                                        <span className="font-medium text-slate-900 dark:text-slate-200 block">{tour.schoolName}</span>
+                                        <span className="text-slate-400 text-xs">{tour.schoolCity} / {tour.schoolDistrict}</span>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                             <div className="flex items-center gap-2 text-slate-500 text-sm">
                                 <MapPin size={16} className="text-amber-500 shrink-0" />
                                 <span>{tour.location}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-slate-500 text-sm">
-                                <Users size={16} className="text-green-500 shrink-0" />
-                                <span><span className="font-bold text-green-600 dark:text-green-400">{tour.registeredCount}</span> Kayıtlı Öğrenci</span>
-                            </div>
+                            {(tour.registeredCount !== undefined) && (
+                                <div className="flex items-center gap-2 text-slate-500 text-sm">
+                                    <Users size={16} className="text-green-500 shrink-0" />
+                                    <span><span className="font-bold text-green-600 dark:text-green-400">{tour.registeredCount}</span> Kayıtlı Öğrenci</span>
+                                </div>
+                            )}
                         </div>
 
                         <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
                             <Link
-                                href={`/tours/${tour.id}?schoolId=${tour.schoolId}`}
+                                href={tour.schoolId ? `/tours/${tour.id}?schoolId=${tour.schoolId}` : `/tours/${tour.id}`}
                                 className="block w-full py-3 rounded-xl border border-amber-500 text-amber-500 font-bold text-center hover:bg-amber-500 hover:text-white transition-all"
                             >
                                 Detayları İncele

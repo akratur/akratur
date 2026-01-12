@@ -329,10 +329,10 @@ function ReviewsSection({ tours, student, parentTc }: { tours: any[], student: a
                                 {[1, 2, 3, 4, 5].map(star => (
                                     <button
                                         key={star} type="button"
-                                        onClick={() => setReviewForm({ ...reviewForm, rating: star })}
-                                        className={`${star <= reviewForm.rating ? 'text-amber-500 fill-amber-500' : 'text-slate-300'}`}
+                                        onClick={() => setReviewForm({ tourId: reviewForm!.tourId, rating: star, comment: reviewForm!.comment })}
+                                        className={`${star <= reviewForm!.rating ? 'text-amber-500 fill-amber-500' : 'text-slate-300'}`}
                                     >
-                                        <Star size={24} className={star <= reviewForm.rating ? 'fill-current' : ''} />
+                                        <Star size={24} className={star <= reviewForm!.rating ? 'fill-current' : ''} />
                                     </button>
                                 ))}
                             </div>
@@ -340,8 +340,8 @@ function ReviewsSection({ tours, student, parentTc }: { tours: any[], student: a
                                 className="w-full p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm mb-3"
                                 rows={3}
                                 placeholder="Deneyiminizi paylaşın..."
-                                value={reviewForm.comment}
-                                onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })}
+                                value={reviewForm!.comment}
+                                onChange={e => setReviewForm({ tourId: reviewForm!.tourId, rating: reviewForm!.rating, comment: e.target.value })}
                             />
                             <div className="flex gap-2 justify-end">
                                 <button type="button" onClick={() => setReviewForm(null)} className="text-slate-500 text-sm px-3">İptal</button>

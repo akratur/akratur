@@ -70,8 +70,11 @@ export function SchoolsClient({ schools, tours }: Props) {
         e.preventDefault();
         setLoading(true);
         // Prepare data for server action
-        const payload = { ...formData };
-        if (!editingSchool) delete payload.id; // Let server handle new ID
+        let payload = { ...formData };
+        if (!editingSchool) {
+            const { id, ...rest } = payload;
+            payload = rest as any;
+        }
 
         const result = await upsertSchoolAction(payload);
         setLoading(false);
