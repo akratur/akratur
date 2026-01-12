@@ -12,6 +12,8 @@ export default async function TourDetailPage({ params, searchParams }: Props) {
     const { id } = await params;
     const { schoolId } = await searchParams;
 
+    export const dynamic = 'force-dynamic';
+
     const tourData = await prisma.tour.findUnique({
         where: { id }
     });
