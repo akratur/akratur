@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/db";
 import { AdminDashboardClient } from "@/components/admin/AdminDashboardClient";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminDashboard() {
     // Fetch all required data in parallel
     const [schools, totalStudents, totalRegistrations, pendingPayments] = await Promise.all([
@@ -21,7 +23,8 @@ export default async function AdminDashboard() {
         }),
         prisma.student.count(),
         prisma.registration.count(),
-        prisma.registration.count({ where: { status: 'pending_payment' } })
+        // Check paymentStatus for 'pending' (waiting for approval)
+        prisma.registration.count({ where: { paymentStatus: 'pending' } })
     ]);
 
     // Process school stats
