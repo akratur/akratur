@@ -23,7 +23,11 @@ export async function upsertTourAction(data: any) {
                 date: new Date(tourData.date),
                 location: tourData.location,
                 itinerary: itineraryJson,
-                price: Number(tourData.price || 0)
+                price: Number(tourData.price || 0),
+                locations: {
+                    set: [], // Clear old ones
+                    connect: locationIds?.map((id: string) => ({ id })) || []
+                }
             },
             create: {
                 title: tourData.title,
@@ -35,7 +39,10 @@ export async function upsertTourAction(data: any) {
                 date: new Date(tourData.date),
                 location: tourData.location,
                 itinerary: itineraryJson,
-                price: Number(tourData.price || 0)
+                price: Number(tourData.price || 0),
+                locations: {
+                    connect: locationIds?.map((id: string) => ({ id })) || []
+                }
             }
         });
 

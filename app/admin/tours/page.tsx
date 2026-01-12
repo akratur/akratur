@@ -5,7 +5,8 @@ import { ToursClient } from "@/components/admin/ToursClient";
 export default async function AdminToursPage() {
     // Fetch data using Prisma
     const tours = await prisma.tour.findMany({
-        orderBy: { date: 'asc' }
+        orderBy: { date: 'asc' },
+        include: { locations: true }
     });
 
     const locations = await prisma.location.findMany({

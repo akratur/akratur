@@ -72,7 +72,8 @@ export function ToursClient({ tours, locations }: Props) {
                 ...tour,
                 date: new Date(tour.date).toISOString().split('T')[0], // Convert Date obj to YYYY-MM-DD
                 itinerary: parsedItinerary || [],
-                images: parsedImages || []
+                images: parsedImages || [],
+                locationIds: tour.locations?.map((l: any) => l.id) || []
             });
         } else {
             setEditingTour(null);
