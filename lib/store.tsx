@@ -34,6 +34,7 @@ interface StoreContextType {
     loginSchool: (id: string) => void;
     loginParent: (tc: string, schoolId: string) => void;
     logout: () => void;
+    isInitialized: boolean;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -49,6 +50,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
     // Auth State
     const [currentUser, setCurrentUser] = useState<{ type: 'admin' | 'school' | 'parent'; id?: string; schoolId?: string } | null>(null);
+    const [isInitialized, setIsInitialized] = useState(false);
 
     // Load from LocalStorage and Check Session
     useEffect(() => {
@@ -68,6 +70,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
                 }
             } catch (e) {
                 console.error("Session check failed", e);
+            } finally {
+                setIsInitialized(true);
             }
         };
         checkSession();
@@ -215,6 +219,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             locations, addLocation, updateLocation, deleteLocation,
             isAdmin: currentUser?.type === 'admin',
             currentUser,
+            isInitialized,
             loginAdmin, logoutAdmin,
             loginSchool, loginParent, logout
         }}>

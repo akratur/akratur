@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-    const { isAdmin, logoutAdmin } = useStore();
+    const { isAdmin, logoutAdmin, isInitialized } = useStore();
     const router = useRouter();
     const pathname = usePathname();
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -31,10 +31,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const isLoginPage = pathname === "/admin/login";
 
     useEffect(() => {
+        if (!isInitialized) return; // Wait for session check
+
         if (!isAdmin && !isLoginPage) {
             router.push("/admin/login");
         }
-    }, [isAdmin, router, isLoginPage]);
+    }, [isAdmin, router, isLoginPage, isInitialized]);
 
     useEffect(() => {
         const checkMobile = () => {
@@ -48,6 +50,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }, []);
 
     if (isLoginPage) return <>{children}</>;
+    if (!isInitialized) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-500">Yükleniyor...</div>;
     if (!isAdmin) return null;
 
     const menuItems = [
