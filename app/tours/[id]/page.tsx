@@ -15,7 +15,8 @@ export default async function TourDetailPage({ params, searchParams }: Props) {
     const { schoolId } = await searchParams;
 
     const tourData = await prisma.tour.findUnique({
-        where: { id }
+        where: { id },
+        include: { locations: true }
     });
 
     if (!tourData) {
@@ -66,36 +67,12 @@ export default async function TourDetailPage({ params, searchParams }: Props) {
         }
     }
 
-    // Determine locations
-    // Logic: Tour has default locationIds? Wait, schema has location string. 
-    // Initial data uses `locationIds`.
-    // Prisma `Tour` model: `location` (String - city name), `locationIds` is NOT in schema (my Create Seed script implied it but wait...)
-
-    // Let's check schema.prisma
-    // model Tour has `location String`. It DOES NOT have a relation to `Location` model directly in my schema!
-    // In `initial-data.ts`, `Tour` had `locationIds`.
-    // In `seed.ts`, I didn't include `locationIds` in `Tour` create data! I used `location: t.location` (string).
-
-    // I must have missed `locationIds` in `schema.prisma`.
-    // To fix this, I need to fetch ALL locations and filter manually or update schema.
-    // For now, I'll fetch all locations, and since I didn't persist the relationship in DB, I might be missing data.
-    // WAIT. If I missed it in schema, the data is lost during migration unless I fix it.
-
-    // Checking `seed.ts` content I wrote in Step 774:
-    // `const tours = [ ... locationIds: ["loc1"] ... ]`
-    // `create: t` -> But `t` has `locationIds`. If Schema doesn't have it, Prisma warns/errors or ignores.
-    // Prisma creates strict types. If `create: t` has extra fields and I didn't define them in `prisma.tour.create`, it works ONLY if I passed strictly the model fields.
-    // But I passed the whole `t` object. Prisma `upsert` input type doesn't allow extra fields usually.
-    // However, I ran the seed script and it verified "Seeding finished".
-    // This implies `tsx` might have ignored type errors or I got lucky.
-    // But usage of `locationIds` requires them to be stored.
-
-    // QUICK FIX: Since I can't easily change schema/migration instantly without losing data or complexity, 
-    // I will just show ALL locations for now or map based on Tour Title/Type if possible.
-    // OR, I can fetch all locations and just show them?
-    // Let's just fetch all locations for now to ensure the UI isn't empty.
-
-    const distinctLocations = await prisma.location.findMany();
+    // Locations are now fetched via relation
+    // Sanitizing videoUrl for client component
+    const tourLocations = tourData.locations.map(l => ({
+        ...l,
+        videoUrl: l.videoUrl || null
+    }));
 
     // Active Surveys
     const surveyData = await prisma.survey.findMany({
@@ -115,7 +92,7 @@ export default async function TourDetailPage({ params, searchParams }: Props) {
         <TourDetailView
             tour={tour}
             school={school}
-            locations={distinctLocations.map(l => ({ ...l, videoUrl: l.videoUrl || null }))}
+            locations={tourLocations}
             registeredCount={registeredCount}
             surveys={surveys}
         />
