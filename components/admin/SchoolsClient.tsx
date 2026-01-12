@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { School, Tour } from "@/lib/types"; // These types might need updating or I define interfaces here if loose
+import { School, Tour } from "@/lib/types";
 import { Plus, Edit, Trash, X, Save, DollarSign, School as SchoolIcon, Eye } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { upsertSchoolAction, deleteSchoolAction } from "@/actions/school";
+import { useRouter } from "next/navigation";
 
 // We need robust types for the props passed from Server Page
 interface SchoolWithTours extends School {
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function SchoolsClient({ schools, tours }: Props) {
+    const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingSchool, setEditingSchool] = useState<any | null>(null);
 
@@ -81,7 +83,7 @@ export function SchoolsClient({ schools, tours }: Props) {
 
         if (result.success) {
             handleCloseModal();
-            window.location.reload(); // Refresh to see changes
+            router.refresh();
         } else {
             alert("Hata: " + result.error);
         }
@@ -121,7 +123,7 @@ export function SchoolsClient({ schools, tours }: Props) {
     const handleDeleteSchool = async (id: string) => {
         if (!confirm("Bu okulu silmek istediğinize emin misiniz?")) return;
         const res = await deleteSchoolAction(id);
-        if (res.success) window.location.reload();
+        if (res.success) router.refresh();
         else alert(res.error);
     }
 
