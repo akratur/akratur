@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Plus, Edit, Trash, X, Save, Clock, Image as ImageIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { upsertTourAction, deleteTourAction } from "@/actions/tour";
+import Link from "next/link";
 
 interface Tour {
     id: string;
@@ -259,7 +260,7 @@ export function ToursClient({ tours, locations }: Props) {
                                                 )) : (
                                                     <div className="text-center py-2">
                                                         <p className="text-xs text-slate-500 mb-1">Henüz lokasyon tanımlanmamış.</p>
-                                                        <a href="/admin/locations" className="text-xs text-blue-400 hover:text-blue-300">Lokasyon Ekle</a>
+                                                        <Link href="/admin/locations" className="text-xs text-blue-400 hover:text-blue-300">Lokasyon Ekle</Link>
                                                     </div>
                                                 )}
                                             </div>

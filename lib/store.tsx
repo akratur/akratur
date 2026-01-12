@@ -50,8 +50,28 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     // Auth State
     const [currentUser, setCurrentUser] = useState<{ type: 'admin' | 'school' | 'parent'; id?: string; schoolId?: string } | null>(null);
 
-    // Load from LocalStorage
+    // Load from LocalStorage and Check Session
     useEffect(() => {
+        // Check session from server/cookie
+        const checkSession = async () => {
+            try {
+                // We'll dynamically import the server action if needed, or better, 
+                // since we can't easily import server action in store (context), 
+                // we rely on a simpler check or passed prop? 
+                // Actually, store.tsx is use client. We CAN import server actions.
+                const { getSession } = await import("@/actions/auth");
+                const session = await getSession();
+                if (session) {
+                    if (session.userType === 'admin') setCurrentUser({ type: 'admin', id: session.userId });
+                    else if (session.userType === 'school') setCurrentUser({ type: 'school', id: session.userId });
+                    else if (session.userType === 'parent') setCurrentUser({ type: 'parent', id: session.userId, schoolId: session.schoolId });
+                }
+            } catch (e) {
+                console.error("Session check failed", e);
+            }
+        };
+        checkSession();
+
         const loadedConfig = localStorage.getItem("siteConfig");
         const loadedTours = localStorage.getItem("tours");
         const loadedSchools = localStorage.getItem("schools");
