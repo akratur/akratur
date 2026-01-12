@@ -1,0 +1,167 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model SiteConfig {
+  id        String   @id @default("config")
+  logo      String?
+  phone     String?
+  email     String?
+  address   String?
+  footerText String?
+  socials   String? // JSON string
+  stats     String? // JSON string for homepage statistics
+  updatedAt DateTime @updatedAt
+}
+
+model Slider {
+  id        String   @id @default(cuid())
+  image     String
+  title     String
+  subtitle  String
+  order     Int      @default(0)
+}
+
+model Tour {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  coverImage  String
+  images      String   // JSON array string
+  videoUrl    String?  // YouTube or other video link
+  type        String
+  date        DateTime
+  location    String
+  itinerary   String   // JSON array string
+  price       Float    @default(0) // Base price, can be overridden per school
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assignedSchools SchoolTour[]
+  registrations   Registration[]
+  expenses        Expense[]
+  reviews         Review[]
+  locations       Location[]
+}
+
+model School {
+  id          String   @id @default(cuid())
+  name        String
+  city        String
+  district    String
+  contactName String
+  phone       String
+  username    String   @unique
+  password    String
+  accessCode  String   @unique
+  iban        String?
+  createdAt   DateTime @default(now())
+
+  assignedTours SchoolTour[]
+  students      Student[]
+}
+
+model SchoolTour {
+  id       String @id @default(cuid())
+  schoolId String
+  tourId   String
+  price    Float
+
+  school School @relation(fields: [schoolId], references: [id])
+  tour   Tour   @relation(fields: [tourId], references: [id])
+
+  @@unique([schoolId, tourId])
+}
+
+model Student {
+  id        String   @id @default(cuid())
+  name      String
+  schoolNo  String
+  grade     String
+  tcNo      String   @unique
+  allergies String?
+  schoolId  String
+  createdAt DateTime @default(now())
+
+  school        School         @relation(fields: [schoolId], references: [id])
+  registrations Registration[]
+}
+
+model Parent {
+  id        String   @id @default(cuid())
+  tcNo      String   @unique
+  name      String?
+  phone     String?
+  createdAt DateTime @default(now())
+  reviews   Review[]
+}
+
+model Registration {
+  id            String   @id @default(cuid())
+  studentId     String
+  tourId        String
+  status        String   @default("pending") // pending, approved, rejected
+  paymentStatus String   @default("unpaid") // unpaid, pending, paid
+  createdAt     DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id])
+  tour    Tour    @relation(fields: [tourId], references: [id])
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  tourId      String
+  description String
+  amount      Float
+  date        DateTime @default(now())
+
+  tour Tour @relation(fields: [tourId], references: [id])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  tourId    String
+  parentId  String
+  rating    Int
+  comment   String
+  status    String   @default("pending") // pending, approved, rejected
+  createdAt DateTime @default(now())
+
+  tour   Tour   @relation(fields: [tourId], references: [id])
+  parent Parent @relation(fields: [parentId], references: [id])
+}
+
+model Survey {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  isActive    Boolean  @default(true)
+  options     String   // JSON array of option strings
+  votes       String   // JSON array of {option: string, count: int}
+  createdAt   DateTime @default(now())
+}
+
+model Location {
+  id          String @id @default(cuid())
+  title       String
+  description String
+  image       String
+  videoUrl    String?
+  tours       Tour[]
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
