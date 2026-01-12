@@ -24,8 +24,7 @@ export default async function AdminSchoolsPage() {
     const sanitizedSchools = schools.map(s => ({
         ...s,
         assignedTours: s.assignedTours.map(at => ({
-            ...at,
-            createdAt: at.createdAt ? at.createdAt.toISOString() : undefined // Handle extra fields if any
+            ...at
         }))
     }));
 
