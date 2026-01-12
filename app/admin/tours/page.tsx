@@ -13,10 +13,27 @@ export default async function AdminToursPage() {
         orderBy: { title: 'asc' }
     });
 
+    // Serialize and sanitize data for Client Components
+    const sanitizedTours = tours.map(t => ({
+        ...t,
+        date: t.date.toISOString(), // Ensure Date is string
+        createdAt: t.createdAt.toISOString(),
+        updatedAt: t.updatedAt.toISOString(),
+        videoUrl: t.videoUrl || undefined,
+        // Map relation to locationIds if not already done by client mapping logic,
+        // but here we just ensure clean data.
+        locations: t.locations.map(l => ({ ...l, videoUrl: l.videoUrl || undefined }))
+    }));
+
+    const sanitizedLocations = locations.map(l => ({
+        ...l,
+        videoUrl: l.videoUrl || undefined
+    }));
+
     return (
         <ToursClient
-            tours={tours}
-            locations={locations}
+            tours={sanitizedTours}
+            locations={sanitizedLocations}
         />
     );
 }

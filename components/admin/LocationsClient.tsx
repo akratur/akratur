@@ -5,12 +5,14 @@ import { useState } from "react";
 import { Plus, Edit, Trash, X, Save, MapPin, Image as ImageIcon, Video } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { upsertLocationAction, deleteLocationAction } from "@/actions/location";
+import { useRouter } from "next/navigation";
 
 interface Props {
     locations: Location[];
 }
 
 export function LocationsClient({ locations }: Props) {
+    const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingLocation, setEditingLocation] = useState<Location | null>(null);
     const [loading, setLoading] = useState(false);
@@ -53,11 +55,7 @@ export function LocationsClient({ locations }: Props) {
 
         if (res.success) {
             handleCloseModal();
-            // Server actions with revalidatePath usually update Server Components, 
-            // but for instant UI feedback without full reload we might need useRouter refresh 
-            // OR just wait for the parent to re-render if it was Server Component.
-            // Since this is client component mounted in server page, calling revalidatePath on server 
-            // will refresh the data passed to this component!
+            router.refresh();
         } else {
             alert(res.error);
         }
@@ -66,7 +64,8 @@ export function LocationsClient({ locations }: Props) {
     const handleDelete = async (id: string) => {
         if (confirm("Bu lokasyonu silmek istediğinizden emin misiniz?")) {
             const res = await deleteLocationAction(id);
-            if (!res.success) alert(res.error);
+            if (res.success) router.refresh();
+            else alert(res.error);
         }
     };
 
