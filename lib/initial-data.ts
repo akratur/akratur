@@ -70,9 +70,9 @@ export const initialSiteConfig: SiteConfig = {
         { label: "Tecrübeli Rehber", value: "30+" }
     ],
     contact: {
-        phone: "+90 (212) 123 45 67",
+        phone: "+90 533 777 76 58 - 532 165 99 66",
         email: "info@akratur.com",
-        address: "Atatürk Bulvarı No:173 Çankaya, Ankara",
+        address: "Atatürk Bulvarı No:173 Muratpaşa, ANTALYA",
         footerText: "Okullar için kültür, bilim, eğitim ve eğlence odaklı turlar düzenliyoruz. Öğrencilerinizin güvenli ve eğitici bir deneyim yaşaması için buradayız.",
         socials: {
             facebook: "https://facebook.com",
