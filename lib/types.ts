@@ -60,6 +60,7 @@ export interface SliderItem {
 
 export interface SiteConfig {
     logo: string;
+    version?: number;
     slider: SliderItem[];
     stats: { label: string; value: string }[];
     contact: {

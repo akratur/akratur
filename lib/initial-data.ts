@@ -37,6 +37,7 @@ export const initialLocations: Location[] = [
 
 export const initialSiteConfig: SiteConfig = {
     logo: "/logo.png",
+    version: 1,
     slider: [
         {
             id: "1",

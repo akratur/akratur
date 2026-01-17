@@ -85,8 +85,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
         if (loadedConfig) {
             const parsed = JSON.parse(loadedConfig);
-            // Merge with initialSiteConfig to ensure new fields (like contact) are present
-            setSiteConfig({ ...initialSiteConfig, ...parsed, contact: { ...initialSiteConfig.contact, ...parsed.contact } });
+
+            // Check version
+            if (parsed.version && parsed.version >= (initialSiteConfig.version || 0)) {
+                // Merge with initialSiteConfig to ensure new fields (like contact) are present
+                setSiteConfig({ ...initialSiteConfig, ...parsed, contact: { ...initialSiteConfig.contact, ...parsed.contact } });
+            } else {
+                // If version is older or missing, force update with initial data but keep some user settings if needed?
+                // For now, let's prioritize initialSiteConfig to fix the contact info issue.
+                // We'll just reset to initialSiteConfig which now has the correct contact info.
+                console.log("Detected old config version, resetting to new default.");
+                setSiteConfig(initialSiteConfig);
+            }
         }
         if (loadedTours) setTours(JSON.parse(loadedTours));
         if (loadedSchools) {
